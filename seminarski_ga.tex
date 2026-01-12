@@ -1,0 +1,159 @@
+\documentclass{article}
+
+\usepackage[a4paper,margin=1.8cm]{geometry}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,serbian]{babel}
+
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{float}
+\newtheorem{primer}{Primer}[section]
+
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+
+\begin{document}
+
+\title{Flipovi u neparnim sparivanjima\\ \small{Seminarski rad u okviru kursa\\Geometrijski algoritmi\\ Matematički fakultet}}
+
+\author{Jovana Urošević\\ mi251023@alas.matf.bg.ac.rs}
+
+\maketitle
+
+\begin{abstract}
+U ovom radu dat je sažet i sistematičan prikaz naučnog članka \emph{``Flips in odd matchings''}, koji se bavi flip-grafom ravanskih gotovo savršenih sparivanja nad skupom tačaka neparne kardinalnosti. Autori dokazuju da je odgovarajući flip-graf uvek povezan, odnosno da se iz svakog ravanskog gotovo savršenog sparivanja može doći do bilo kog drugog nizom elementarnih flipova jedne ivice. Pored toga, analiziran je dijametar flip-grafa u opštem slučaju, kao i u posebnom slučaju kada se tačke nalaze u konveksnom položaju. U ovom prikazu iznose se osnovne ideje i glavni rezultati rada, bez ulaženja u tehničke detalje dokaza, uz osvrt na značaj rezultata i njihov odnos prema postojećoj literaturi.
+\end{abstract}
+
+\section{Osnovni podaci o radu}
+
+Rad \emph{``Flips in odd matchings''} napisali su Oswin Aichholzer (Tehnički univerzitet u Gracu, Austrija), Anna Brötzner (Univerzitet u Malmeu, Švedska), Daniel Perz (Univerzitet u Peruđi, Italija) i Patrick Schnider (ETH Cirih, Švajcarska). Autori su aktivni istraživači u oblasti računarske geometrije i teorije grafova, sa posebnim fokusom na ravanske strukture i rekonfiguracione probleme.
+
+Rad je objavljen u časopisu \emph{Computational Geometry: Theory and Applications}, tom \textbf{129} (2025), kao članak sa brojem \textbf{102184}.  Istraživanje je inicirano tokom 18.\ European Geometric Graph Week, održane u septembru 2023.\ godine u Alcalá de Henaresu.
+
+\section{Uvod: Postavka problema i njegova motivacija}
+
+Autori polaze od šireg koncepta \emph{rekonfiguracije}, koji podrazumeva transformaciju jedne strukture u drugu putem niza malih, dozvoljenih koraka. U kontekstu ravanskih grafova, takvi koraci su često \emph{flipovi ivica}, a prostor svih konfiguracija zajedno sa flipovima čini \emph{flip-graf}.
+
+\emph{Sparivanja} predstavljaju poseban problem: kod savršenih sparivanja (paran broj tačaka) jedan flip ivice uglavnom nije dovoljan, pa se moraju razmatrati složenije operacije koje menjaju dve ivice istovremeno. Iako je u konveksnom slučaju poznato da je odgovarajući flip-graf povezan, za opšte skupove tačaka to pitanje ostaje otvoreno.
+
+Zbog toga autori menjaju perspektivu i razmatraju \emph{neparan broj tačaka}, gde se pojavljuje tačno jedna nesparena tačka. Ova naizgled mala promena omogućava prirodnu definiciju flipa jedne ivice i otvara put ka snažnim rezultatima o povezanosti.
+
+Neka je $P$ skup od $n = 2m+1$ tačaka u ravni u opštem položaju.  
+\emph{Gotovo savršeno sparivanje} je skup $m$ duži čiji su krajevi parno disjunktni, dok jedna tačka ostaje nesparena. Sparivanje je \emph{ravansko} ako se nijedne dve duži ne seku.
+
+Skup svih takvih sparivanja označava se sa $M_P$.  
+Flip-graf $G_{MP}$ ima:
+\begin{itemize}
+    \item čvorove: sva ravanska gotovo savršena sparivanja,
+    \item ivice: između dva sparivanja $M_1$ i $M_2$ ako se mogu dobiti jedno iz drugog jednim flipom.
+\end{itemize}
+
+Flip se definiše na sledeći način: ako je $p$ nesparena tačka u sparivanju $M_1$, a $q$ neka druga tačka takva da duž $pq$ ne seče nijednu postojeću duž, tada se iz sparivanja uklanja ivica incidentna u $q$ i dodaje se ivica $pq$. Time se dobija novo ravansko gotovo savršeno sparivanje $M_2$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{slika1.png}
+    \caption{Ilustracija flip-operacije: uklanjanje ivice incidentne u tački $q$ i dodavanje ivice $pq$.}
+    \label{fig:flip-pq}
+\end{figure}
+
+Značaj problema je u tome što flip-graf formalizuje prostor svih dozvoljenih konfiguracija. Ako je flip-graf povezan, onda ne postoje izolovana sparivanja, tj.\ svako sparivanje se može transformisati u bilo koje drugo. Ovo je osnov za algoritme enumeracije (obilazak prostora konfiguracija), za konstrukcije u morfingu i za teorijsko razumevanje složenosti rekonfiguracije.
+
+\section{Teorema o povezanosti}
+Glavni rezultat rada je:
+
+\medskip
+\noindent \textbf{Teorema 1.} \emph{Za svaki skup $P$ od $n=2m+1$ tačaka u opštem položaju u ravni, flip-graf $G_{MP}$ je povezan.}
+\medskip
+
+Osnovna ideja dokaza nije u direktnom prelaženju između proizvoljna dva sparivanja, već u sledećem:
+\begin{enumerate}
+    \item pokazati da se nesparena tačka može premeštati na bilo koju željenu tačku skupa $P$,
+    \item zatim svako sparivanje dovesti u jedno fiksno, \emph{kanonsko sparivanje},
+    \item koristiti činjenicu da se sekvence flipova mogu obrnuti.
+\end{enumerate}
+
+Ključni alat za ovo je pojam \emph{alternirajućeg puta}: puta u grafu čije ivice naizmenično pripadaju sparivanju i njegovom komplementu. Takav put direktno indukuje sekvencu flipova.
+
+\section{Graf vidljivosti i alternirajući putevi}
+
+Centralni tehnički alat rada zasniva se na pojmu \emph{alternirajućeg puta} i na upotrebi tzv.\ grafova vidljivosti krajnjih tačaka duži. 
+
+Najpre, neka je $G=(V,E)$ graf i neka je $M \subseteq E$ sparivanje u grafu $G$. Put u grafu $G$ naziva se \emph{alternirajućim} ako se njegove ivice naizmenično smenjuju između ivica koje pripadaju sparivanju $M$ i ivica koje mu ne pripadaju. U geometrijskom kontekstu, ravanski alternirajući put koji počinje ili se završava u nesparenoj tački prirodno indukuje sekvencu flipova: svaka ivica sparivanja na putu biva uklonjena, dok se svaka odgovarajuća ne-sparivačka ivica dodaje u novo sparivanje.
+
+Ova veza između alternirajućih puteva i flipova ilustrovana je na Slici~\ref{fig:alt-path}, gde se vidi kako ravanski alternirajući put u grafu vidljivosti daje sekvencu lokalnih flipova koja transformiše jedno sparivanje u drugo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{slika2.png}
+    \caption{Ravanski alternirajući put u grafu vidljivosti krajnjih tačaka duži indukuje sekvencu flipova.}
+    \label{fig:alt-path}
+\end{figure}
+
+Da bi konstruisali ovakve puteve, autori uvode \emph{graf vidljivosti krajnjih tačaka duži}. Čvorovi ovog grafa su krajnje tačke duži sparivanja, dok dve tačke formiraju ivicu ako su ili direktno povezane duži sparivanja, ili se međusobno vide, tj.\ ako otvorena duž između njih ne seče nijednu duž iz sparivanja. 
+
+Ključni spoljašnji rezultat koji autori koriste jeste teorema Hofmana i Tóta, prema kojoj graf vidljivosti krajnjih tačaka duži uvek sadrži jednostavan ravanski Hamiltonov ciklus. Time se dobija struktura koja je unija savršenog sparivanja i Hamiltonovog ciklusa nad istim skupom čvorova, što predstavlja polaznu tačku za konstrukciju alternirajućih puteva.
+
+U tom okviru formulisana je \emph{Lema~2}, koja predstavlja najvažniju tehničku tvrdnju rada. Ona garantuje da u grafu koji je unija Hamiltonovog ciklusa i savršenog sparivanja uvek postoji alternirajući put koji počinje u zadatoj ivici sparivanja i završava se u proizvoljno izabranom čvoru. Iako je dokaz ove leme prilično tehnički i konstruktivan, njegova suština leži u činjenici da se struktura ciklusa i sparivanja može razmotati tako da uvek vodi do željene tačke. Zbog toga autori ovu lemu koriste kao osnovni mehanizam za kontrolisano pomeranje nesparene tačke kroz skup $P$.
+
+Konstrukcija alternirajućeg puta u okviru dokaza Leme~2 ilustrovana je na Slici~\ref{fig:gk}, gde je prikazan prelaz sa grafa $G_k$ na graf $G_{k+1}$. Putevi $G_k$ i $G_{k+1}$ prikazani su punim linijama, dok su neiskorišćene ivice grafa iscrtane isprekidano. Ivicama sparivanja dodeljena je crvena boja, dok su ivice Hamiltonovog ciklusa prikazane crnom bojom.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{slika3.png}
+    \caption{Konstrukcija grafa $G_{k+1}$ (desno) iz grafa $G_k$ (levo).}
+    \label{fig:gk}
+\end{figure}
+
+\section{Lema 3 i kanonsko sparivanje}
+
+Na osnovu Leme~2, autori dokazuju \emph{Lemu~3}, koja ima direktnu geometrijsku interpretaciju i ključnu ulogu u dokazu povezanosti flip-grafa. Lema~3 tvrdi da se iz bilo kog ravanskog gotovo savršenog sparivanja može doći do sparivanja u kome je proizvoljno izabrana tačka nesparena, i to uz najviše $m$ flipova.
+
+Intuitivno, ova lema formalizuje ideju da se nesparena tačka može transportovati kroz skup tačaka pomoću niza lokalnih flipova, pri čemu se u svakom koraku zadržava ravanskost sparivanja. Time se eliminiše zavisnost od početne pozicije nesparene tačke i otvara mogućnost da se sparivanja porede i transformišu na sistematičan način.
+
+Kako bi završili dokaz glavne teoreme, autori uvode \emph{kanonsko sparivanje} $M_C$. Ono se konstruiše tako što se tačke skupa $P$ poređaju s leva na desno i uparuju susedne tačke, dok poslednja tačka ostaje nesparena. Zbog linearnog poretka, ovakvo sparivanje je trivijalno ravansko i služi kao referentna konfiguracija. Pokazivanjem da se svako sparivanje može flipovima dovesti do $M_C$, i obrnuto, sledi povezanost celog flip-grafa.
+
+\section{Dijametar flip-grafa}
+
+Nakon što je povezanost flip-grafa ustanovljena, autori razmatraju pitanje njegove \emph{dijametra}, odnosno maksimalnog broja flipova potrebnih za transformaciju jednog sparivanja u drugo.
+
+U opštem slučaju dobijaju se donja granica reda $O(n)$ i gornja granica reda $O(n^2)$. Donja granica potiče iz činjenice da se jednim flipom može promeniti samo jedna ivica sparivanja, dok gornja granica sledi iz iterativnog dovođenja sparivanja u kanonski oblik.
+
+Posebno je ilustrativan primer prikazan na Slici~\ref{fig:linear}, gde je pokazano da je u nekim konfiguracijama potrebno $\Omega(n)$ flipova samo da bi se nesparena tačka prebacila na granicu konveksnog omotača. U svakom koraku nesparena tačka može se pomeriti najviše za jedan sloj ka spolja, što vodi do linearnog donjeg ograničenja.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{slika4.png}
+    \caption{Primer u kome je potrebno $\Omega(n)$ flipova da bi se dato sparivanje transformisalo u sparivanje u kome je nesparena tačka na granici konveksnog omotača.}
+    \label{fig:linear}
+\end{figure}
+
+U slučaju kada su tačke u konveksnom položaju, autori dobijaju preciznije rezultate. Pokazuju da je dijametar flip-grafa tada najmanje $n-2$ i najviše $2n-2$. Donja granica je ilustrovana primerom sa Slike~\ref{fig:convex}, gde se vidi da je za prelaz između dva sparivanja potrebno flipovati veliki broj ivica čak i više puta. Gornja granica se dobija korišćenjem dualne strukture rasporeda oblasti, koja omogućava sistematsko dodavanje ivica kanonskog sparivanja.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{slika5.png}
+    \caption{Za transformaciju sparivanja $M_1$ (levo, crno) u sparivanje $M_2$ (desno, crno) potrebno je $2m-1$ flipova. Horizontalne ivice (sve osim dve donje) moraju biti flipovane dva puta. Crvene ivice označavaju najkraću sekvencu flipova.}
+    \label{fig:convex}
+\end{figure}
+
+\section{Zaključak}
+
+U ovom radu autori su pokazali da je flip-graf ravanskih gotovo savršenih sparivanja nad skupom tačaka neparne veličine uvek povezan. Ključnu ulogu u dokazu ima Lema~2, koja obezbeđuje postojanje alternirajućih puteva u uniji Hamiltonovog ciklusa i sparivanja, dok Lema~3 omogućava kontrolisano premeštanje nesparene tačke.
+
+Pored povezanosti, data je i detaljna analiza dijametra flip-grafa, sa kvadratnim gornjim ograničenjem u opštem slučaju i linearnim ograničenjem u slučaju konveksnog položaja tačaka. Rad jasno pokazuje da prelazak sa savršenih na gotovo savršena sparivanja značajno pojednostavljuje rekonfiguraciju.
+
+Kao prirodan pravac za buduća istraživanja ostaje otvoreno pitanje povezanosti flip-grafa ravanskih savršenih sparivanja nad skupovima tačaka parne veličine, gde se u svakom flipu moraju menjati tačno dve ivice.
+
+\end{document}
